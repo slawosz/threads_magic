@@ -15,7 +15,9 @@ class Ticker
     @ticker_thread = Thread.new do
       while @running
         sleep @interval
-        @mutex.synchronize { @callbacks.first.call if @running }
+        @callbacks.each do |callback|
+          @mutex.synchronize { callback.call if @running }
+        end
       end
     end
   end
