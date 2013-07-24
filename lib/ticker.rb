@@ -1,9 +1,9 @@
 class Ticker
 
   def initialize(interval)
-
     @interval  = interval
     @callbacks = []
+    @mutex     = Mutex.new
   end
 
   def on_tick(&block)
@@ -15,7 +15,7 @@ class Ticker
     @ticker_thread = Thread.new do
       while @running
         sleep @interval
-        @callbacks.first.call
+        @mutex.synchronize { @callbacks.first.call if @running }
       end
     end
   end
