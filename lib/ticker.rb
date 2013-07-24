@@ -15,8 +15,12 @@ class Ticker
     @ticker_thread = Thread.new do
       while @running
         sleep @interval
-        @callbacks.each do |callback|
-          @mutex.synchronize { callback.call if @running }
+        @mutex.synchronize do
+          if @running
+            @callbacks.map do |callback|
+              Thread.new { callback.call }
+            end#.map(&:join) # when on, on tick need to finish (and provide to problems). The reason is that including thread is waiting for these threads to finish execute
+          end
         end
       end
     end
