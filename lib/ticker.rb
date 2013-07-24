@@ -11,10 +11,16 @@ class Ticker
   end
 
   def start
+    @running = true
     @ticker_thread = Thread.new do
-      sleep @interval
-      @callbacks.first.call
+      while @running
+        sleep @interval
+        @callbacks.first.call
+      end
     end
-    @ticker_thread.join
+  end
+
+  def stop
+    @running = false
   end
 end
