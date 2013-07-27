@@ -9,7 +9,6 @@ class BlockingQueue
   end
 
   def push(elem)
-    print '.'
     @mutex.synchronize do
       @q.push(elem)
       @signal.broadcast
