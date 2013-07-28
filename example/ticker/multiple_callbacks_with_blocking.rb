@@ -1,4 +1,4 @@
-require_relative '../lib/ticker'
+require_relative '../../lib/ticker'
 
 ticker = Ticker.new(1.5)
 
@@ -16,6 +16,7 @@ end
 
 puts Time.now.strftime("start: %T.%L\n")
 ticker.start
+p 'ticker started;'
 sleep 6.1
 puts Time.now.strftime("end:   %T.%L")
 ticker.stop

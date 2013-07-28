@@ -2,26 +2,30 @@ require 'thread'
 
 $ids = []
 class Runner
+  attr_reader :collected_runs
 
   def self.loop(opts = { runs: 1 }, &block)
     runner = new
     runner.loop(opts, &block)
+    runner.run_all
   end
 
   def initialize
     @collected_runs = []
+    @current_runs   = []
     @before_runs    = []
   end
 
   def loop(opts = { runs: 1 }, &block)
+    # get_all_runs from here
     opts[:runs].times do
-      block.call(child_runner)
+      self.instance_exec &block
     end
-    run_all
+
+    collect_runs
   end
 
   def run(&block)
-    $ids << self.object_id
     @collected_runs << block
   end
 
@@ -49,6 +53,9 @@ class Runner
         end.map(&:join)
       end
     else
+      # require 'pry'
+      # binding.pry
+      p @collected_runs.count
       p Time.now.strftime("run all: %T.%L")
       # TODO: make propagation to childs
       @collected_runs.map do |collected_run|
@@ -57,8 +64,10 @@ class Runner
     end
   end
 
-  def child_runner
-    @child_runner ||= Runner.new
+  def collect_runs
+    @collected_runs += @current_runs
+
+    @current_runs    = []
   end
 end
 

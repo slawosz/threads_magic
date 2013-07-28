@@ -7,6 +7,7 @@ class Ticker
   end
 
   def on_tick(&block)
+    p block
     @callbacks << block
   end
 
